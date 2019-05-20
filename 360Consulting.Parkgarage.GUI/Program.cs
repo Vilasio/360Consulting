@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using _360Consulting.Parkgarage.Data;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -16,15 +17,24 @@ namespace _360Consulting.Parkgarage.GUI
         [STAThread]
         static void Main()
         {
-            NpgsqlConnection connection = new NpgsqlConnection(ConfigurationManager.AppSettings["Connection"]);
+            //NpgsqlConnection connection = new NpgsqlConnection(ConfigurationManager.AppSettings["Connection"]);
+            
 
             try
             {
-                connection.Open();
+                //connection.Open();
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm());
+                InitiliazeForm initiliazeForm = new InitiliazeForm();
+
+                if (initiliazeForm.ShowDialog() == DialogResult.OK)
+                {
+                    
+                    MainForm mainForm = new MainForm(initiliazeForm.garage);
+                    Application.Run(mainForm);
+                }
+                
             }
             catch(NpgsqlException dbEx)
             {
@@ -36,7 +46,7 @@ namespace _360Consulting.Parkgarage.GUI
             }
             finally
             {
-                connection.Close();
+                //connection.Close();
             }
             
         }

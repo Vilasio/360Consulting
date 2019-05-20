@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace _360Consulting.Parkgarage.Data
 {
-    class Spot
+    public class Spot
     {
         private Vehicle vehicle;
 
@@ -16,6 +16,19 @@ namespace _360Consulting.Parkgarage.Data
             set { vehicle = value; }
         }
 
-        public string SpotId { get; set; }
+        public Floor Floor { get; set; }
+        public int SpotId { get; set; }
+
+        public Spot()
+        {
+
+        }
+
+        public Spot(int spotId, Floor floor)
+        {
+            this.SpotId = spotId;
+            this.Floor = floor;
+        }
+
     }
 }
