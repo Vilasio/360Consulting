@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +9,18 @@ namespace _360Consulting.Parkgarage.Data
 {
     public class Garage
     {
-
-        public int Floor { get; set; }
-        public int SpotPerFloor { get; set; }
+        //------------------------------------
+        //Property
+        //------------------------------------
+        public long? GarageId { get; set; }
+        public long? Floor { get; set; }
+        public long? SpotPerFloor { get; set; }
+        public string Name { get; set; }
+        private NpgsqlConnection connection = null;
 
         public List<Floor> Floors { get; set; }
 
-        public List<Vehicle> Allvehicles
+        /*public List<Vehicle> Allvehicles
         {
             get
             {
@@ -35,93 +41,135 @@ namespace _360Consulting.Parkgarage.Data
                 return Allvehicles;
             }
             set { Allvehicles = value; }
-        }
+        }*/
 
-
+        //------------------------------------
+        //Constructor
+        //------------------------------------
         public Garage()
         {
 
+        }
+
+        public Garage(NpgsqlConnection connection)
+        {
+            this.connection = connection;
         }
 
         public Garage(int floor, int spotPerFloor)
         {
             this.Floor = floor;
             this.SpotPerFloor = spotPerFloor;
-            CreateFloors();
+            
         }
 
-        private void CreateFloors()
+        public Garage(int floor, int spotPerFloor, NpgsqlConnection connection)
         {
-            this.Floors = new List<Floor>();
-            for (int i = 0; i < this.Floor; i++)
+            this.Floor = floor;
+            this.SpotPerFloor = spotPerFloor;
+            this.connection = connection;
+        }
+
+        //------------------------------------
+        //Public Methods
+        //------------------------------------
+        public int Save()
+        {
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = this.connection;
+            if (this.GarageId.HasValue)
             {
-                Floor floor = new Floor(this.SpotPerFloor, (i + 1));
-                this.Floors.Add(floor);
+
+                command.CommandText =
+                $"update Parkgarage.garage set name = :na, floors = :fl, spots = :sp where garage_id = gid";
+
+
             }
-        }
-
-        public Spot GetFirstFreeSpot()
-        {
-            Spot free = null;
-            foreach (Floor floor in Floors)
+            else
             {
-                foreach (Spot spot in floor.Spots)
+                command.CommandText = $"select nextval('Parkgarage.garage_seq')";
+                this.GarageId = (long?)command.ExecuteScalar();
+
+                command.CommandText = $" insert into Parkgarage.garage ( garage_id, name, floors, spots )" +
+                    $" values(:gid, :na, :fl, :sp)";
+            }
+            command.Parameters.AddWithValue("gid", this.GarageId.Value);
+            command.Parameters.AddWithValue("na", String.IsNullOrEmpty(this.Name) ? (object)DBNull.Value : this.Name);
+            command.Parameters.AddWithValue("fl", this.Floor.HasValue ? (object)this.Floor.Value : 0);
+            command.Parameters.AddWithValue("sp", this.SpotPerFloor.HasValue ? (object)this.SpotPerFloor.Value : 0);
+            
+
+
+
+
+            int result = command.ExecuteNonQuery();
+
+            if (this.Floors != null)
+            {
+                foreach (Floor floor in this.Floors)
                 {
-                    if (spot.Vehicle == null)
-                    {
-                        free = spot;
-                        return free;
-                    }
+                    result += floor.Save();
                 }
             }
-            return free;
+
+
+            return result;
+        }
+        //------------------------------------
+        //Static Methods
+        //------------------------------------
+        public static List<Garage> GetAllGarages(NpgsqlConnection connection)
+        {
+            List<Garage> allGarages = new List<Garage>();
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = connection;
+            command.CommandText = $"Select * from Parkgarage.garage;";
+
+            NpgsqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    allGarages.Add(new Garage(connection)
+                    {
+                        GarageId = reader.GetInt64(0),
+                        Name = reader.IsDBNull(1) ? null : reader.GetString(1),
+                        Floor = reader.IsDBNull(2) ? 0 : (long?)reader.GetInt64(2),
+                        SpotPerFloor = reader.IsDBNull(3) ? null : (long?)reader.GetInt64(3)
+                    }
+                    );
+                }
+                reader.Close();
+            }
+            
+            return allGarages;
         }
 
-        public bool AllreadyIn(string numberplate)
+        public static Garage CreateGarage(NpgsqlConnection connection, int floors, int spots, string name)
         {
-            foreach (Floor floor in Floors)
+            Garage garage = new Garage(connection);
+            garage.Name = name;
+            garage.Floors = new List<Floor>();
+            garage.Floor = floors;
+            garage.SpotPerFloor = spots;
+            Floor floor = null;
+            Spot spot = null;
+            for (int i = 1; i <= floors; i++)
             {
-                foreach (Spot spot in floor.Spots)
+                floor = new Floor(connection, garage, i, spots);
+                floor.Spots = new List<Spot>();
+                garage.Floors.Add(floor);
+
+                for (int x = 1; x <= spots; x++)
                 {
-                    if (spot.Vehicle != null )
-                    {
-                        if (spot.Vehicle.NumberPlate == numberplate)
-                        {
-                            return true;
-                        }
-                    }
-                    
+                    spot = new Spot(connection, floor, x);
+                    floor.Spots.Add(spot);
                 }
             }
-            return false;
+            garage.Save();
 
-            /*List<Vehicle> test = this.Allvehicles;
-            var match = test.Where(x => x.NumberPlate.Contains(numberplate));
-            if (match.Count() > 0)
-            {
-                return true;
-            }
-            return false;*/
+
+            return garage;
         }
-        public Spot Search(string numberplate)
-        {
-            Spot nix = null;
-            foreach (Floor floor in Floors)
-            {
-                foreach (Spot spot in floor.Spots)
-                {
-                    if (spot.Vehicle != null)
-                    {
-                        if (spot.Vehicle.NumberPlate == numberplate)
-                        {
-                            return spot;
-                        }
-                    }
-
-                }
-            }
-            return nix;
-        }
-
     }
 }

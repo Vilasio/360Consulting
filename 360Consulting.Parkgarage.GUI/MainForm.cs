@@ -60,7 +60,7 @@ namespace _360Consulting.Parkgarage.GUI
             foreach (Spot spot in spots)
             {
                 item = new ListViewItem();
-                item.Text = spot.SpotId.ToString();
+                item.Text = spot.SpotNr.ToString();
                 if (spot.Vehicle != null)
                 {
                     item.SubItems.Add(spot.Vehicle.NumberPlate);
@@ -71,6 +71,7 @@ namespace _360Consulting.Parkgarage.GUI
             }
         }
 
+        /*
         private bool ValidateVehicle()
         {
             if (this.garage.AllreadyIn(this.textBoxNumberPlate.Text))
@@ -123,6 +124,7 @@ namespace _360Consulting.Parkgarage.GUI
             }
            
         }
+        */
 
         private void listViewFloor_MouseClick(object sender, MouseEventArgs e)
         {
@@ -178,18 +180,18 @@ namespace _360Consulting.Parkgarage.GUI
 
         private void buttonDriveIn_Click(object sender, EventArgs e)
         {
-            if (ValidateVehicle())
+           /* if (ValidateVehicle())
             {
                 FillListViewSpots(this.selectedFloor.Spots);
                 this.spot = null;
-            }
+            }*/
         }
 
    
 
         private void buttonSearch_Click(object sender, EventArgs e)
         {
-            Spot spot = this.garage.Search(this.textBoxNumberPlate.Text);
+           /* Spot spot = this.garage.Search(this.textBoxNumberPlate.Text);
             if (spot != null)
             {
                 MessageBox.Show($"Gefunden\n" +
@@ -198,7 +200,7 @@ namespace _360Consulting.Parkgarage.GUI
             else
             {
                 MessageBox.Show($"Leider nichts gefunden","Nix", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            }*/
         }
 
         private void buttonDriveOut_Click(object sender, EventArgs e)

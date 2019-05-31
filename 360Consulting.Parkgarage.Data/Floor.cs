@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,31 +9,120 @@ namespace _360Consulting.Parkgarage.Data
 {
     public class Floor
     {
-        public int Spot { get; set; }
-        public int FloorNumber { get; set; }
+        //------------------------------------
+        //Property
+        //------------------------------------
+        private NpgsqlConnection connection = null;
+
+        private Garage garage = null;
+
+        public long? Spot { get; set; }
+        public long? FloorId { get; set; }
+        public long? FloorNumber { get; set; }
         public List<Spot> Spots { get; set; }
         public int Free { get; set; }
 
+        //------------------------------------
+        //Constructor
+        //------------------------------------
         public Floor()
         {
 
         }
 
-        public Floor(int spot, int floorNumber)
+        public Floor(NpgsqlConnection connection, Garage garage)
         {
-            this.Spot = spot;
-            this.FloorNumber = floorNumber;
-            CreateSpots();
+            this.connection = connection;
+            this.garage = garage;
+            this.Spot = garage.SpotPerFloor;
+
+        }
+
+        public Floor(NpgsqlConnection connection, Garage garage, int floornumber, int spot)
+        {
+            this.connection = connection;
+            this.garage = garage;
+            this.FloorNumber = (long?)floornumber;
+            this.Spot = (long?)spot;
         }
 
         private void CreateSpots()
         {
-            this.Spots = new List<Spot>();
-            for (int i = 0; i < Spot; i++)
+            
+            
+        }
+
+        //------------------------------------
+        //Public Methods
+        //------------------------------------
+        public int Save()
+        {
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = this.connection;
+            if (this.FloorId.HasValue)
             {
-                Spot spot = new Spot((i + 1), this);
-                this.Spots.Add(spot);
+
+                command.CommandText =
+                $"update Parkgarage.floors set floor = :vid";
+
+
             }
+            else
+            {
+                command.CommandText = $"select nextval('Parkgarage.floor_seq')";
+                this.FloorId = (long?)command.ExecuteScalar();
+
+                command.CommandText = $" insert into Parkgarage.floors ( floor_id, garage_id, floors )" +
+                    $" values(:fid, :gid, :fl)";
+            }
+            command.Parameters.AddWithValue("fid", this.FloorId.Value);
+            command.Parameters.AddWithValue("gid", this.garage.GarageId.Value);
+            command.Parameters.AddWithValue("fl", this.FloorNumber.HasValue ? (object)this.FloorNumber.Value : 0);
+
+
+            int result = command.ExecuteNonQuery();
+
+            if (this.Spots != null)
+            {
+                foreach (Spot spot in this.Spots)
+                {
+                    result += spot.Save();
+                }
+            }
+
+
+            return result;
+        }
+
+
+
+        //------------------------------------
+        //Static Methods
+        //------------------------------------
+        public static List<Floor> GetAFloors(NpgsqlConnection connection, Garage garage)
+        {
+            List<Floor> allFloors = new List<Floor>();
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = connection;
+            command.CommandText = $"Select Distinct floors, floors_id from Parkgarage.spot where garage_id = id;";
+            command.Parameters.AddWithValue("id", garage.GarageId.Value);
+            NpgsqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    allFloors.Add(new Floor(connection, garage)
+                    {
+                        FloorNumber = reader.IsDBNull(0) ? 0 : (long?)reader.GetInt64(0),
+                        FloorId = reader.IsDBNull(1) ? null : (long?)reader.GetInt64(1)
+                    }
+                    );
+                }
+                reader.Close();
+            }
+            
+            return allFloors;
         }
     }
 }

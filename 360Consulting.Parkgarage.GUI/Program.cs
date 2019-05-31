@@ -17,16 +17,16 @@ namespace _360Consulting.Parkgarage.GUI
         [STAThread]
         static void Main()
         {
-            //NpgsqlConnection connection = new NpgsqlConnection(ConfigurationManager.AppSettings["Connection"]);
+            NpgsqlConnection connection = new NpgsqlConnection(ConfigurationManager.AppSettings["Connection"]);
             
 
             try
             {
-                //connection.Open();
+                connection.Open();
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                InitiliazeForm initiliazeForm = new InitiliazeForm();
+                InitiliazeForm initiliazeForm = new InitiliazeForm(connection);
 
                 if (initiliazeForm.ShowDialog() == DialogResult.OK)
                 {
@@ -46,7 +46,7 @@ namespace _360Consulting.Parkgarage.GUI
             }
             finally
             {
-                //connection.Close();
+                connection.Close();
             }
             
         }
