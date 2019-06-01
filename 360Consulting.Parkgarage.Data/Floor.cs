@@ -99,7 +99,7 @@ namespace _360Consulting.Parkgarage.Data
         //------------------------------------
         //Static Methods
         //------------------------------------
-        public static List<Floor> GetAFloors(NpgsqlConnection connection, Garage garage)
+        public static List<Floor> GetAllFloors(NpgsqlConnection connection, Garage garage)
         {
             List<Floor> allFloors = new List<Floor>();
             NpgsqlCommand command = new NpgsqlCommand();
@@ -122,6 +122,37 @@ namespace _360Consulting.Parkgarage.Data
                 reader.Close();
             }
             
+            return allFloors;
+        }
+
+        public static List<Floor> GetAllFloorsWithSpots(NpgsqlConnection connection, Garage garage)
+        {
+            List<Floor> allFloors = new List<Floor>();
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = connection;
+            command.CommandText = $"Select Distinct floors, floor_id from Parkgarage.floors where garage_id = :id;";
+            command.Parameters.AddWithValue("id", garage.GarageId.Value);
+            NpgsqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    allFloors.Add(new Floor(connection, garage)
+                    {
+                        FloorNumber = reader.IsDBNull(0) ? 0 : (long?)reader.GetInt64(0),
+                        FloorId = reader.IsDBNull(1) ? null : (long?)reader.GetInt64(1)
+                    }
+                    );
+                }
+                reader.Close();
+            }
+
+            foreach (Floor floor in allFloors)
+            {
+                floor.Spots = _360Consulting.Parkgarage.Data.Spot.GetAllSpotsPerFloor(connection, floor) ;
+            }
+
             return allFloors;
         }
     }

@@ -20,28 +20,25 @@ namespace _360Consulting.Parkgarage.Data
 
         public List<Floor> Floors { get; set; }
 
-        /*public List<Vehicle> Allvehicles
+        public int FreeSpots
         {
-            get
-            {
-                if (Allvehicles == null)
+            get {
+                int result = 0;
+                foreach (Floor floor in this.Floors)
                 {
-                    Allvehicles = new List<Vehicle>();
-                    foreach (Floor floor in Floors)
+                    foreach (Spot spot in floor.Spots)
                     {
-                        foreach (Spot spot in floor.Spots)
+                        if (spot.Vehicle == null)
                         {
-                            if (spot.Vehicle != null)
-                            {
-                                Allvehicles.Add(spot.Vehicle);
-                            }
+                            result++;
                         }
                     }
                 }
-                return Allvehicles;
+                return result;
             }
-            set { Allvehicles = value; }
-        }*/
+
+        }
+
 
         //------------------------------------
         //Constructor
@@ -115,6 +112,46 @@ namespace _360Consulting.Parkgarage.Data
 
             return result;
         }
+
+        public Spot GetFirstFree()
+        {
+            Spot free = null;
+            foreach (Floor floor in this.Floors)
+            {
+                foreach (Spot spot in floor.Spots)
+                {
+                    if (spot.Vehicle == null)
+                    {
+                        free = spot;
+                        return free;
+                    }
+                }
+            }
+            return free;
+        }
+
+        public bool AllreadyIn(string numberplate)
+        {
+            bool result = false;
+            foreach (Floor floor in this.Floors)
+            {
+                foreach (Spot spot in floor.Spots)
+                {
+                    if (spot.Vehicle != null)
+                    {
+                        if (spot.Vehicle.NumberPlate == numberplate)
+                        {
+                            result = true;
+                            return result;
+                        }
+                    }
+                   
+                }
+            }
+            return result;
+        }
+
+        
         //------------------------------------
         //Static Methods
         //------------------------------------
@@ -139,9 +176,9 @@ namespace _360Consulting.Parkgarage.Data
                     }
                     );
                 }
-                reader.Close();
+                
             }
-            
+            reader.Close();
             return allGarages;
         }
 

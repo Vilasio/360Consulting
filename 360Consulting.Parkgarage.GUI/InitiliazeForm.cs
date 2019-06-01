@@ -114,6 +114,7 @@ namespace _360Consulting.Parkgarage.GUI
         {
             if (this.garage != null)
             {
+                this.garage.Floors = Floor.GetAllFloorsWithSpots(this.connection, garage);
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }

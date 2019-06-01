@@ -1,4 +1,5 @@
 ﻿using _360Consulting.Parkgarage.Data;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,8 @@ namespace _360Consulting.Parkgarage.GUI
         private Garage garage = null;
         private Spot spot = null;
         private Floor selectedFloor= null;
+        private Search search = null;
+        private NpgsqlConnection connection = null;
 
         private enum Kind
         {
@@ -29,11 +32,11 @@ namespace _360Consulting.Parkgarage.GUI
             InitializeComponent();
         }
 
-        public MainForm(Garage garage)
+        public MainForm(Garage garage, NpgsqlConnection connection)
         {
             InitializeComponent();
             this.garage = garage;
-           
+            this.connection = connection;
         }
 
         private void FillListViewFloor()
@@ -71,7 +74,7 @@ namespace _360Consulting.Parkgarage.GUI
             }
         }
 
-        /*
+        
         private bool ValidateVehicle()
         {
             if (this.garage.AllreadyIn(this.textBoxNumberPlate.Text))
@@ -85,9 +88,11 @@ namespace _360Consulting.Parkgarage.GUI
             {
                 bool result = true;
                 Vehicle vehicle = new Vehicle();
+                string numberplate = String.Empty;
+                string kind = String.Empty;
                 if (this.spot == null)
                 {
-                    this.spot = garage.GetFirstFreeSpot();
+                    this.spot = garage.GetFirstFree();
                     if (spot == null)
                     {
                         this.labelStatus.Visible = true;
@@ -95,14 +100,12 @@ namespace _360Consulting.Parkgarage.GUI
                         SystemSounds.Asterisk.Play();
                         return false;
                     }
-                    vehicle.Spot = this.spot;
-                    this.spot.Vehicle = vehicle;
 
                 }
 
                 if (this.textBoxNumberPlate.Text != "")
                 {
-                    this.spot.Vehicle.NumberPlate = this.textBoxNumberPlate.Text;
+                    numberplate = this.textBoxNumberPlate.Text;
                 }
                 else
                 {
@@ -113,18 +116,31 @@ namespace _360Consulting.Parkgarage.GUI
                 }
                 if (this.checkBoxCar.Checked)
                 {
-                    this.spot.Vehicle.Kind = "Auto";
+                    kind = "Auto";
 
                 }
                 else
                 {
-                    this.spot.Vehicle.Kind = "Motorad";
+                    kind = "Motorad";
                 }
+                if (!this.spot.DriveIn(numberplate, kind))
+                {
+                    this.labelStatus.Visible = true;
+                    this.labelStatus.Text = "Das Fahrzeug parkt bereits in einer anderen Garage.";
+                    SystemSounds.Asterisk.Play();
+                    return false;
+                }
+                else
+                {
+                    this.labelStatus.Visible = true;
+                    this.labelStatus.Text = $"Fahrzeug {this.spot.Vehicle.NumberPlate} geparkt";
+                }
+                
                 return result;
             }
            
         }
-        */
+        
 
         private void listViewFloor_MouseClick(object sender, MouseEventArgs e)
         {
@@ -154,6 +170,8 @@ namespace _360Consulting.Parkgarage.GUI
             //this.comboBoxKind.DataSource = Enum.GetValues(typeof(Kind));
             FillListViewFloor();
             this.selectedFloor = this.garage.Floors.ElementAt(0);
+            this.Text = $"Garage: {this.garage.Name}";
+            this.toolStripStatusLabelFreeSpots.Text = this.garage.FreeSpots.ToString();
         }
 
         private void checkBoxCar_CheckedChanged(object sender, EventArgs e)
@@ -180,36 +198,51 @@ namespace _360Consulting.Parkgarage.GUI
 
         private void buttonDriveIn_Click(object sender, EventArgs e)
         {
-           /* if (ValidateVehicle())
+           if (ValidateVehicle())
             {
                 FillListViewSpots(this.selectedFloor.Spots);
                 this.spot = null;
-            }*/
+                this.toolStripStatusLabelFreeSpots.Text = this.garage.FreeSpots.ToString();
+            }
+
         }
 
    
 
         private void buttonSearch_Click(object sender, EventArgs e)
         {
-           /* Spot spot = this.garage.Search(this.textBoxNumberPlate.Text);
-            if (spot != null)
+            if (this.textBoxNumberPlate.Text != "")
             {
-                MessageBox.Show($"Gefunden\n" +
-                    $"Das Fahrzeug steht in Etage {spot.Floor.FloorNumber} auf Platz {spot.SpotId}", "Gefunden", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.search = new Search(this.connection, this.textBoxNumberPlate.Text, this.garage);
+
+                SearchForm searchForm = new SearchForm(this.search, this.connection);
+
+                if (searchForm.ShowDialog() == DialogResult.OK)
+                {
+                   if(this.selectedFloor != null) this.FillListViewSpots(this.selectedFloor.Spots);
+                }
             }
             else
             {
-                MessageBox.Show($"Leider nichts gefunden","Nix", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }*/
+                this.labelStatus.Visible = true;
+                this.labelStatus.Text = "Kein Kennzeichen angegeben.";
+                SystemSounds.Asterisk.Play();
+                
+            }
+            
         }
 
         private void buttonDriveOut_Click(object sender, EventArgs e)
         {
             if (this.spot != null)
             {
-                this.spot.Vehicle = null;
-                FillListViewSpots(this.spot.Floor.Spots);
-                ClearVehicle();
+                if (this.spot.DriveOut())
+                {
+                    FillListViewSpots(this.spot.Floor.Spots);
+                    ClearVehicle();
+                    this.toolStripStatusLabelFreeSpots.Text = this.garage.FreeSpots.ToString();
+                }
+               
             }
         }
 
@@ -240,6 +273,7 @@ namespace _360Consulting.Parkgarage.GUI
                     this.checkBoxCar.Checked = true;
                     this.checkBoxMotorcycle.Checked = false;
                 }
+                this.textBoxNumberPlate.Enabled = false;
             }
         }
 
@@ -254,6 +288,7 @@ namespace _360Consulting.Parkgarage.GUI
             this.checkBoxMotorcycle.Enabled = true;
             this.buttonDriveOut.Enabled = false;
             this.buttonDriveIn.Enabled = true;
+            this.textBoxNumberPlate.Enabled = true;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)

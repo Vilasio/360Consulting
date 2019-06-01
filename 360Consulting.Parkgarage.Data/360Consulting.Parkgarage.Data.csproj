@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Floor.cs" />
     <Compile Include="Garage.cs" />
+    <Compile Include="Search.cs" />
     <Compile Include="Spot.cs" />
     <Compile Include="Vehicle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

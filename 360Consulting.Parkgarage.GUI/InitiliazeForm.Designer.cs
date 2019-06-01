@@ -206,7 +206,7 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.Name = "InitiliazeForm";
-            this.Text = "InitiliazeForm";
+            this.Text = "GaragenApp";
             this.Load += new System.EventHandler(this.InitiliazeForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFloors)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpots)).EndInit();

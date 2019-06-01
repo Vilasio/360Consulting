@@ -14,7 +14,9 @@ namespace _360Consulting.Parkgarage.Data
         public long? VehicleId { get; set; }
         public string NumberPlate { get; set; }
         public Floor Floor { get; set; }
+        public long? FloorNr { get; set; }
         public Spot Spot { get; set; }
+        public long? SpotNr { get; set; }
         public string Kind { get; set; }
 
         public Vehicle()
@@ -35,7 +37,7 @@ namespace _360Consulting.Parkgarage.Data
             {
 
                 command.CommandText =
-                $"update Parkgarage.vehicle set numberplate = :np, position_floor = :pf, position_spot = :ps, kind = :k";
+                $"update Parkgarage.vehicle set numberplate = :np, position_floor = :pf, position_spot = :ps, kind = :k where vehicle_id = :vid";
 
 
             }
@@ -44,13 +46,13 @@ namespace _360Consulting.Parkgarage.Data
                 command.CommandText = $"select nextval('Parkgarage.vehicle_seq')";
                 this.VehicleId = (long?)command.ExecuteScalar();
 
-                command.CommandText = $" insert into Parkgarage.vehicle ( vehicle_id, numberplate, position_floor, positon_spot, kind )" +
+                command.CommandText = $" insert into Parkgarage.vehicle ( vehicle_id, numberplate, position_floor, position_spot, kind )" +
                     $" values(:vid,:np, :pf, :ps, :k)";
             }
             command.Parameters.AddWithValue("vid", this.VehicleId.Value);
             command.Parameters.AddWithValue("np", String.IsNullOrEmpty(this.NumberPlate) ? (object)DBNull.Value : this.NumberPlate);
-            command.Parameters.AddWithValue("pf", this.Floor.FloorNumber.HasValue ? this.Floor.FloorNumber.Value : (object)DBNull.Value);
-            command.Parameters.AddWithValue("ps", this.Spot.SpotNr.HasValue ? this.Spot.SpotNr.Value : (object)DBNull.Value);
+            command.Parameters.AddWithValue("pf", this.FloorNr.HasValue ? this.FloorNr.Value : (object)DBNull.Value);
+            command.Parameters.AddWithValue("ps", this.SpotNr.HasValue ? this.SpotNr.Value : (object)DBNull.Value);
             command.Parameters.AddWithValue("k", String.IsNullOrEmpty(this.Kind) ? (object)DBNull.Value : this.Kind);
 
 
@@ -66,7 +68,7 @@ namespace _360Consulting.Parkgarage.Data
             
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
-            command.CommandText = $"Select numberplate, kind from Parkgarage.vehicle where vehicle_id = id;";
+            command.CommandText = $"Select numberplate, kind from Parkgarage.vehicle where vehicle_id = :id;";
             command.Parameters.AddWithValue("id", spot.VehicleId.Value);
             NpgsqlDataReader reader = command.ExecuteReader();
 
@@ -74,7 +76,7 @@ namespace _360Consulting.Parkgarage.Data
             {
                 reader.Read();
                 vehicle = new Vehicle(connection);
-                vehicle.VehicleId = spot.Vehicle.VehicleId;
+                vehicle.VehicleId = spot.VehicleId.Value;
                 vehicle.Spot = spot;
                 vehicle.Floor = spot.Floor;
                 vehicle.NumberPlate = reader.IsDBNull(0) ? null : reader.GetString(0);

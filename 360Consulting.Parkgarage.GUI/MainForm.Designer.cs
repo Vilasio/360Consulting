@@ -33,8 +33,8 @@
             this.listViewFloor = new System.Windows.Forms.ListView();
             this.columnFloor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonSearch = new System.Windows.Forms.Button();
-            this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.groupBoxVehicle = new System.Windows.Forms.GroupBox();
+            this.buttonCancel = new System.Windows.Forms.Button();
             this.labelStatus = new System.Windows.Forms.Label();
             this.checkBoxMotorcycle = new System.Windows.Forms.CheckBox();
             this.checkBoxCar = new System.Windows.Forms.CheckBox();
@@ -46,7 +46,12 @@
             this.ColumnSpotNr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnNumberPlate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnKind = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.buttonCancel = new System.Windows.Forms.Button();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.toolStripStatusLabelFreeDescr = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelFreeSpots = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripMenuItemData = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerGarage)).BeginInit();
             this.splitContainerGarage.Panel1.SuspendLayout();
             this.splitContainerGarage.Panel2.SuspendLayout();
@@ -56,12 +61,13 @@
             this.splitContainerwasweißich.Panel2.SuspendLayout();
             this.splitContainerwasweißich.SuspendLayout();
             this.groupBoxVehicle.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainerGarage
             // 
-            this.splitContainerGarage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerGarage.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerGarage.Location = new System.Drawing.Point(0, 27);
             this.splitContainerGarage.Name = "splitContainerGarage";
             // 
             // splitContainerGarage.Panel1
@@ -88,8 +94,6 @@
             // 
             // splitContainerwasweißich.Panel2
             // 
-            this.splitContainerwasweißich.Panel2.Controls.Add(this.buttonSearch);
-            this.splitContainerwasweißich.Panel2.Controls.Add(this.textBoxSearch);
             this.splitContainerwasweißich.Panel2.Controls.Add(this.groupBoxVehicle);
             this.splitContainerwasweißich.Size = new System.Drawing.Size(266, 450);
             this.splitContainerwasweißich.SplitterDistance = 221;
@@ -117,7 +121,7 @@
             // 
             // buttonSearch
             // 
-            this.buttonSearch.Location = new System.Drawing.Point(165, 177);
+            this.buttonSearch.Location = new System.Drawing.Point(179, 65);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 23);
             this.buttonSearch.TabIndex = 7;
@@ -125,15 +129,9 @@
             this.buttonSearch.UseVisualStyleBackColor = true;
             this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
-            // textBoxSearch
-            // 
-            this.textBoxSearch.Location = new System.Drawing.Point(9, 179);
-            this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(150, 20);
-            this.textBoxSearch.TabIndex = 7;
-            // 
             // groupBoxVehicle
             // 
+            this.groupBoxVehicle.Controls.Add(this.buttonSearch);
             this.groupBoxVehicle.Controls.Add(this.buttonCancel);
             this.groupBoxVehicle.Controls.Add(this.labelStatus);
             this.groupBoxVehicle.Controls.Add(this.checkBoxMotorcycle);
@@ -144,14 +142,24 @@
             this.groupBoxVehicle.Controls.Add(this.buttonRandom);
             this.groupBoxVehicle.Location = new System.Drawing.Point(3, 3);
             this.groupBoxVehicle.Name = "groupBoxVehicle";
-            this.groupBoxVehicle.Size = new System.Drawing.Size(260, 145);
+            this.groupBoxVehicle.Size = new System.Drawing.Size(260, 219);
             this.groupBoxVehicle.TabIndex = 4;
             this.groupBoxVehicle.TabStop = false;
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Location = new System.Drawing.Point(94, 190);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.TabIndex = 7;
+            this.buttonCancel.Text = "Abbrechen";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // labelStatus
             // 
             this.labelStatus.AutoSize = true;
-            this.labelStatus.Location = new System.Drawing.Point(9, 100);
+            this.labelStatus.Location = new System.Drawing.Point(6, 156);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(36, 17);
             this.labelStatus.TabIndex = 6;
@@ -162,7 +170,7 @@
             // checkBoxMotorcycle
             // 
             this.checkBoxMotorcycle.AutoSize = true;
-            this.checkBoxMotorcycle.Location = new System.Drawing.Point(133, 69);
+            this.checkBoxMotorcycle.Location = new System.Drawing.Point(63, 69);
             this.checkBoxMotorcycle.Name = "checkBoxMotorcycle";
             this.checkBoxMotorcycle.Size = new System.Drawing.Size(68, 17);
             this.checkBoxMotorcycle.TabIndex = 5;
@@ -192,7 +200,7 @@
             // 
             // buttonDriveIn
             // 
-            this.buttonDriveIn.Location = new System.Drawing.Point(6, 116);
+            this.buttonDriveIn.Location = new System.Drawing.Point(0, 190);
             this.buttonDriveIn.Name = "buttonDriveIn";
             this.buttonDriveIn.Size = new System.Drawing.Size(75, 23);
             this.buttonDriveIn.TabIndex = 0;
@@ -202,7 +210,7 @@
             // 
             // buttonDriveOut
             // 
-            this.buttonDriveOut.Location = new System.Drawing.Point(179, 116);
+            this.buttonDriveOut.Location = new System.Drawing.Point(186, 190);
             this.buttonDriveOut.Name = "buttonDriveOut";
             this.buttonDriveOut.Size = new System.Drawing.Size(75, 23);
             this.buttonDriveOut.TabIndex = 1;
@@ -252,22 +260,61 @@
             this.columnKind.Text = "Fahrzeugart";
             this.columnKind.Width = 150;
             // 
-            // buttonCancel
+            // statusStrip1
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(87, 116);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 7;
-            this.buttonCancel.Text = "Abbrechen/Neu";
-            this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabelFreeDescr,
+            this.toolStripStatusLabelFreeSpots});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 480);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.TabIndex = 1;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemData});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip1.TabIndex = 2;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // toolStripStatusLabelFreeDescr
+            // 
+            this.toolStripStatusLabelFreeDescr.Name = "toolStripStatusLabelFreeDescr";
+            this.toolStripStatusLabelFreeDescr.Size = new System.Drawing.Size(72, 17);
+            this.toolStripStatusLabelFreeDescr.Text = "Freie Plätze: ";
+            // 
+            // toolStripStatusLabelFreeSpots
+            // 
+            this.toolStripStatusLabelFreeSpots.Name = "toolStripStatusLabelFreeSpots";
+            this.toolStripStatusLabelFreeSpots.Size = new System.Drawing.Size(0, 17);
+            // 
+            // toolStripMenuItemData
+            // 
+            this.toolStripMenuItemData.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exitToolStripMenuItem});
+            this.toolStripMenuItemData.Name = "toolStripMenuItemData";
+            this.toolStripMenuItemData.Size = new System.Drawing.Size(46, 20);
+            this.toolStripMenuItemData.Text = "Datei";
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 502);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainerGarage);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -277,12 +324,16 @@
             this.splitContainerGarage.ResumeLayout(false);
             this.splitContainerwasweißich.Panel1.ResumeLayout(false);
             this.splitContainerwasweißich.Panel2.ResumeLayout(false);
-            this.splitContainerwasweißich.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerwasweißich)).EndInit();
             this.splitContainerwasweißich.ResumeLayout(false);
             this.groupBoxVehicle.ResumeLayout(false);
             this.groupBoxVehicle.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -305,8 +356,13 @@
         private System.Windows.Forms.CheckBox checkBoxCar;
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.Button buttonSearch;
-        private System.Windows.Forms.TextBox textBoxSearch;
         private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelFreeDescr;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelFreeSpots;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemData;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     }
 }
 

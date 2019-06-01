@@ -31,7 +31,7 @@ namespace _360Consulting.Parkgarage.GUI
                 if (initiliazeForm.ShowDialog() == DialogResult.OK)
                 {
                     
-                    MainForm mainForm = new MainForm(initiliazeForm.garage);
+                    MainForm mainForm = new MainForm(initiliazeForm.garage, connection);
                     Application.Run(mainForm);
                 }
                 

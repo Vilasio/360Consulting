@@ -37,6 +37,12 @@ namespace _360Consulting.Parkgarage.Data
 
         }
 
+        public Spot(NpgsqlConnection connection)
+        {
+            this.connection = connection;
+        }
+
+
         public Spot(NpgsqlConnection connection, Floor floor)
         {
             this.connection = connection;
@@ -84,7 +90,7 @@ namespace _360Consulting.Parkgarage.Data
 
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
-            command.CommandText = $"Select * from Parkgarage.spot;";
+            command.CommandText = $"Select * from Parkgarage.spot where floor_id = :fl order by spot_id;";
             command.Parameters.AddWithValue("fl", floor.FloorId);
 
             NpgsqlDataReader reader = command.ExecuteReader();
@@ -116,6 +122,42 @@ namespace _360Consulting.Parkgarage.Data
             return allSpots;
         }
 
+        public static Spot GetSpecificSpot(NpgsqlConnection connection, long? spotId)
+        {
+            Spot spot = new Spot(connection);
+
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = connection;
+            command.CommandText = $"Select * from Parkgarage.spot where spot_id = :id;";
+            command.Parameters.AddWithValue("id", spotId);
+
+            NpgsqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+
+
+                    spot.SpotId = reader.GetInt64(0);
+                    spot.FloorId = reader.GetInt64(1);
+                    spot.VehicleId = reader.IsDBNull(2) ? null : (long?)reader.GetInt64(2);
+                    spot.SpotNr = reader.IsDBNull(3) ? null : (long?)reader.GetInt64(3);
+                    
+                    
+                }
+            }
+
+            reader.Close();
+            
+            if (spot.VehicleId != null)
+            {
+                spot.Vehicle = Vehicle.GetVehicle(connection, spot);
+            }
+            
+
+            return spot;
+        }
+
         public int Save()
         {
             NpgsqlCommand command = new NpgsqlCommand();
@@ -124,7 +166,7 @@ namespace _360Consulting.Parkgarage.Data
             {
 
                 command.CommandText =
-                $"update Parkgarage.spot set vehicle_Id = :vid";
+                $"update Parkgarage.spot set vehicle_Id = :vid where spot_id = :sid";
 
 
             }
@@ -137,7 +179,8 @@ namespace _360Consulting.Parkgarage.Data
                     $" values(:sid,:fid, :vid, :sp)";
             }
             command.Parameters.AddWithValue("sid", this.SpotId.Value);
-            command.Parameters.AddWithValue("fid", this.Floor.FloorId.Value);
+            if(this.Floor != null) command.Parameters.AddWithValue("fid", this.Floor.FloorId.Value);
+            else command.Parameters.AddWithValue("fid", this.FloorId.Value);
             command.Parameters.AddWithValue("vid", this.vehicle == null ? (object)DBNull.Value : this.vehicle.VehicleId);
             command.Parameters.AddWithValue("sp", this.SpotNr.HasValue ? (object)this.SpotNr.Value : 0);
 
@@ -154,8 +197,72 @@ namespace _360Consulting.Parkgarage.Data
         }
 
         //DriveIn Prüfung ob das Vehicle bereits in der Datenbank ist und wenn nicht dann neues anlegen
+        public bool DriveIn( string numberplate, string kind)
+        {
+            Vehicle vehicle = null;
+            bool result = false;
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = this.connection;
+            command.CommandText = $"Select * from Parkgarage.vehicle where numberplate = :np;";
+            command.Parameters.AddWithValue("np", numberplate);
+            NpgsqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                reader.Read();
+                vehicle = new Vehicle(this.connection);
+                vehicle.VehicleId = reader.IsDBNull(0) ? null : (long?)reader.GetInt64(0);
+                vehicle.NumberPlate = reader.IsDBNull(1) ? null : reader.GetString(1);
+                vehicle.SpotNr = reader.IsDBNull(2) ? null : (long?)reader.GetInt64(2);
+                vehicle.FloorNr = reader.IsDBNull(3) ? null : (long?)reader.GetInt64(3);
+                vehicle.Kind = reader.IsDBNull(4) ? null : reader.GetString(4);
+                reader.Close();
+                result = true;
+                if (vehicle.SpotNr != null)
+                {
+                    result = false;
+                }
 
+            }
+            else
+            {
+                reader.Close();
+                vehicle = new Vehicle(this.connection);
+                vehicle.Spot = this;
+                vehicle.Floor = this.Floor;
+                vehicle.Kind = kind;
+                vehicle.NumberPlate = numberplate;
+                vehicle.SpotNr = this.SpotNr;
+                vehicle.FloorNr = this.Floor.FloorNumber;
+                vehicle.Save();
+                result = true;
+            }
+
+            if (result)
+            {
+                this.vehicle = vehicle;
+                this.Save();
+            }
+            
+
+            return result;
+        }
 
         //DriveOut
+        public bool DriveOut()
+        {
+            bool result = false;
+            if (this.Vehicle != null)
+            {
+                this.Vehicle.SpotNr = null;
+                this.Vehicle.FloorNr = null;
+                this.Vehicle.Floor = null;
+                this.Vehicle.Spot = null;
+                this.Vehicle.Save();
+                this.Vehicle = null;
+                this.Save();
+                result = true;
+            }
+            return result;
+        }
     }
 }
