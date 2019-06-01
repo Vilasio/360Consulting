@@ -130,7 +130,7 @@ namespace _360Consulting.Parkgarage.Data
             List<Floor> allFloors = new List<Floor>();
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
-            command.CommandText = $"Select Distinct floors, floor_id from Parkgarage.floors where garage_id = :id;";
+            command.CommandText = $"Select Distinct floors, floor_id from Parkgarage.floors where garage_id = :id order by floors;";
             command.Parameters.AddWithValue("id", garage.GarageId.Value);
             NpgsqlDataReader reader = command.ExecuteReader();
 
@@ -154,6 +154,27 @@ namespace _360Consulting.Parkgarage.Data
             }
 
             return allFloors;
+        }
+
+        public int Delete()
+        {
+            foreach (Spot spot in this.Spots)
+            {
+                spot.Delete();
+            }
+
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = this.connection;
+            int result = 0;
+            if (this.FloorId.HasValue)
+            {
+
+                command.CommandText =
+                $"delete from Parkgarage.floors  where floor_id = :fid";
+                command.Parameters.AddWithValue("fid", this.FloorId.Value);
+                result = command.ExecuteNonQuery();
+            }
+            return result;
         }
     }
 }

@@ -43,6 +43,7 @@
             this.labelName = new System.Windows.Forms.Label();
             this.button = new System.Windows.Forms.Button();
             this.groupBoxGarage = new System.Windows.Forms.GroupBox();
+            this.buttonDelete = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFloors)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpots)).BeginInit();
             this.groupBoxGarage.SuspendLayout();
@@ -137,6 +138,7 @@
             this.listViewGarage.UseCompatibleStateImageBehavior = false;
             this.listViewGarage.View = System.Windows.Forms.View.Details;
             this.listViewGarage.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listViewGarage_MouseClick);
+            this.listViewGarage.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewGarage_MouseDoubleClick);
             // 
             // columnHeaderName
             // 
@@ -156,6 +158,7 @@
             // textBoxName
             // 
             this.textBoxName.Location = new System.Drawing.Point(14, 35);
+            this.textBoxName.MaxLength = 245;
             this.textBoxName.Name = "textBoxName";
             this.textBoxName.Size = new System.Drawing.Size(200, 20);
             this.textBoxName.TabIndex = 8;
@@ -194,11 +197,23 @@
             this.groupBoxGarage.TabStop = false;
             this.groupBoxGarage.Text = "Neue Garage";
             // 
+            // buttonDelete
+            // 
+            this.buttonDelete.Location = new System.Drawing.Point(15, 248);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(75, 23);
+            this.buttonDelete.TabIndex = 12;
+            this.buttonDelete.Text = "Löschen";
+            this.buttonDelete.UseVisualStyleBackColor = true;
+            this.buttonDelete.Visible = false;
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            // 
             // InitiliazeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 283);
+            this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.groupBoxGarage);
             this.Controls.Add(this.button);
             this.Controls.Add(this.listViewGarage);
@@ -206,6 +221,7 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.Name = "InitiliazeForm";
+            this.ShowIcon = false;
             this.Text = "GaragenApp";
             this.Load += new System.EventHandler(this.InitiliazeForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFloors)).EndInit();
@@ -234,5 +250,6 @@
         private System.Windows.Forms.Label labelName;
         private System.Windows.Forms.Button button;
         private System.Windows.Forms.GroupBox groupBoxGarage;
+        private System.Windows.Forms.Button buttonDelete;
     }
 }

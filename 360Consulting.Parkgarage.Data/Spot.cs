@@ -264,5 +264,22 @@ namespace _360Consulting.Parkgarage.Data
             }
             return result;
         }
+
+        public int Delete()
+        {
+            
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = this.connection;
+            int result = 0;
+            if (this.SpotId.HasValue)
+            {
+
+                command.CommandText =
+                $"delete from Parkgarage.spot  where spot_id = :sid";
+                command.Parameters.AddWithValue("sid", this.SpotId.Value);
+                result = command.ExecuteNonQuery();
+            }
+            return result;
+        }
     }
 }

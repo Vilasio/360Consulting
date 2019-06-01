@@ -170,6 +170,7 @@ namespace _360Consulting.Parkgarage.GUI
             //this.comboBoxKind.DataSource = Enum.GetValues(typeof(Kind));
             FillListViewFloor();
             this.selectedFloor = this.garage.Floors.ElementAt(0);
+            if (this.selectedFloor != null) FillListViewSpots(this.selectedFloor.Spots);
             this.Text = $"Garage: {this.garage.Name}";
             this.toolStripStatusLabelFreeSpots.Text = this.garage.FreeSpots.ToString();
         }
@@ -294,6 +295,11 @@ namespace _360Consulting.Parkgarage.GUI
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             ClearVehicle();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

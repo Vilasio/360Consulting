@@ -70,15 +70,16 @@ namespace _360Consulting.Parkgarage.GUI
         private bool ValidateInput()
         {
             bool result = true;
+            List<Garage> matches = new List<Garage>( this.garages.Where(x => x.Name == this.textBoxName.Text));
 
-            if (this.textBoxName.Text != "")
+            if (this.textBoxName.Text != "" && matches.Count == 0)
             {
                 this.name = this.textBoxName.Text;
             }
             else
             {
                 this.labelStatus.Visible = true;
-                this.labelStatus.Text = "Die Garage muss einen Namen haben!";
+                this.labelStatus.Text = "Die Garage muss einen einzigartigen Namen haben!";
                 SystemSounds.Asterisk.Play();
                 return false;
             }
@@ -137,6 +138,7 @@ namespace _360Consulting.Parkgarage.GUI
             this.numericUpDownFloors.Enabled = true;
             this.numericUpDownSpots.Enabled = true;
             this.groupBoxGarage.Text = $"Neue Garage";
+            this.buttonDelete.Visible = false;
         }
 
         private void listViewGarage_MouseClick(object sender, MouseEventArgs e)
@@ -149,6 +151,7 @@ namespace _360Consulting.Parkgarage.GUI
                 this.numericUpDownFloors.Enabled = false;
                 this.numericUpDownSpots.Enabled = false;
                 this.groupBoxGarage.Text = $"Garage {this.garage.Name} öffnen";
+                this.buttonDelete.Visible = true;
             }
             else
             {
@@ -164,6 +167,32 @@ namespace _360Consulting.Parkgarage.GUI
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        private void listViewGarage_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ListViewItem item = this.listViewGarage.GetItemAt(e.X, e.Y);
+            this.garage = (Garage)item.Tag;
+            this.garage.Floors = Floor.GetAllFloorsWithSpots(this.connection, garage);
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            if (this.garage != null)
+            {
+                this.garage.Floors = Floor.GetAllFloorsWithSpots(this.connection, this.garage);
+                this.garage.Delete();
+                this.garages.Remove(this.garage);
+                this.garage = null;
+                this.textBoxName.Enabled = true;
+                this.numericUpDownFloors.Enabled = true;
+                this.numericUpDownSpots.Enabled = true;
+                this.groupBoxGarage.Text = $"Neue Garage";
+                this.buttonDelete.Visible = false;
+                FillListViewGarage();
+            }
         }
     }
 }

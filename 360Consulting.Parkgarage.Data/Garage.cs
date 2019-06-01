@@ -151,7 +151,26 @@ namespace _360Consulting.Parkgarage.Data
             return result;
         }
 
-        
+        public int Delete()
+        {
+            foreach (Floor floor in this.Floors)
+            {
+                floor.Delete();
+            }
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = this.connection;
+            int result = 0;
+            if (this.GarageId.HasValue)
+            {
+
+                command.CommandText =
+                $"delete from Parkgarage.garage  where garage_id = :gid";
+                command.Parameters.AddWithValue("gid", this.GarageId.Value);
+                result = command.ExecuteNonQuery();
+            }
+            return result;
+        }
+
         //------------------------------------
         //Static Methods
         //------------------------------------

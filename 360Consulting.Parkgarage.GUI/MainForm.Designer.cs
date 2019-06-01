@@ -194,6 +194,7 @@
             // textBoxNumberPlate
             // 
             this.textBoxNumberPlate.Location = new System.Drawing.Point(6, 19);
+            this.textBoxNumberPlate.MaxLength = 245;
             this.textBoxNumberPlate.Name = "textBoxNumberPlate";
             this.textBoxNumberPlate.Size = new System.Drawing.Size(150, 20);
             this.textBoxNumberPlate.TabIndex = 2;
@@ -305,6 +306,7 @@
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -316,6 +318,7 @@
             this.Controls.Add(this.splitContainerGarage);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
+            this.ShowIcon = false;
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.splitContainerGarage.Panel1.ResumeLayout(false);
@@ -342,7 +345,6 @@
         private System.Windows.Forms.SplitContainer splitContainerGarage;
         private System.Windows.Forms.SplitContainer splitContainerwasweißich;
         private System.Windows.Forms.Button buttonRandom;
-        private System.Windows.Forms.TextBox textBoxNumberPlate;
         private System.Windows.Forms.Button buttonDriveOut;
         private System.Windows.Forms.Button buttonDriveIn;
         private System.Windows.Forms.ListView listViewSpots;
@@ -363,6 +365,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelFreeSpots;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemData;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        public System.Windows.Forms.TextBox textBoxNumberPlate;
     }
 }
 

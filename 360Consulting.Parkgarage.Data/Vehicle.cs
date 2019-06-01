@@ -89,8 +89,6 @@ namespace _360Consulting.Parkgarage.Data
 
         public static bool Exists(NpgsqlConnection connection, string numberplate)
         {
-            Vehicle vehicle = null;
-
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
             command.CommandText = $"Select * from Parkgarage.vehicle where numberplate = :np;";
@@ -98,6 +96,22 @@ namespace _360Consulting.Parkgarage.Data
             NpgsqlDataReader reader = command.ExecuteReader();
             bool result = reader.HasRows;
             reader.Close();
+            return result;
+        }
+
+        public int Delete()
+        {
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = this.connection;
+            int result = 0;
+            if (this.VehicleId.HasValue)
+            {
+
+                command.CommandText =
+                $"delete from Parkgarage.vehicle  where vehicle_id = :vid";
+                command.Parameters.AddWithValue("vid", this.VehicleId.Value);
+                result = command.ExecuteNonQuery();
+            }
             return result;
         }
     }

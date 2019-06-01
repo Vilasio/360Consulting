@@ -48,6 +48,7 @@
             // textBoxNumberplate
             // 
             this.textBoxNumberplate.Location = new System.Drawing.Point(15, 25);
+            this.textBoxNumberplate.MaxLength = 245;
             this.textBoxNumberplate.Name = "textBoxNumberplate";
             this.textBoxNumberplate.Size = new System.Drawing.Size(200, 20);
             this.textBoxNumberplate.TabIndex = 1;
@@ -106,7 +107,8 @@
             this.Controls.Add(this.textBoxNumberplate);
             this.Controls.Add(this.labelNumberplate);
             this.Name = "SearchForm";
-            this.Text = "SearchForm";
+            this.ShowIcon = false;
+            this.Text = "Suchen";
             this.Load += new System.EventHandler(this.SearchForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
