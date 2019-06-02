@@ -107,6 +107,13 @@ namespace _360Consulting.Parkgarage.GUI
                 SystemSounds.Asterisk.Play();
                 return false;
             }
+            if ((this.numericUpDownSpots.Value * this.numericUpDownFloors.Value) > 10001)
+            {
+                this.labelStatus.Visible = true;
+                this.labelStatus.Text = "Die Garage kann nur maximal 10.000 Plätze fassen!";
+                SystemSounds.Asterisk.Play();
+                return false;
+            }
 
             return result;
         }

@@ -70,6 +70,11 @@
             // numericUpDownFloors
             // 
             this.numericUpDownFloors.Location = new System.Drawing.Point(89, 61);
+            this.numericUpDownFloors.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.numericUpDownFloors.Name = "numericUpDownFloors";
             this.numericUpDownFloors.Size = new System.Drawing.Size(120, 20);
             this.numericUpDownFloors.TabIndex = 2;
@@ -82,6 +87,11 @@
             // numericUpDownSpots
             // 
             this.numericUpDownSpots.Location = new System.Drawing.Point(89, 96);
+            this.numericUpDownSpots.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.numericUpDownSpots.Name = "numericUpDownSpots";
             this.numericUpDownSpots.Size = new System.Drawing.Size(120, 20);
             this.numericUpDownSpots.TabIndex = 3;
